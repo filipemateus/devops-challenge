@@ -32,7 +32,21 @@ services:
       - certbot-etc:/etc/letsencrypt
     networks:
       - app-network
-
+  
+  portainer:
+    depends_on:
+      - webserver      
+    image: portainer/portainer
+    restart: always
+    ports:
+      - "9002:9000"
+      - "8000:8000"      
+    networks:
+      - app-network
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+        
   certbot:
     depends_on:
       - webserver
@@ -42,10 +56,11 @@ services:
       - certbot-etc:/etc/letsencrypt
       - wordpress:/var/www/html
     command: certonly --webroot --webroot-path=/var/www/html --email filipe@canionlabs.io --agree-tos --no-eff-email --force-renewal -d apiki.duckdns.org -d www.apiki.duckdns.org
-
+   
 volumes:
   certbot-etc:
   wordpress:
+  portainer_data:        
 
 networks:
   app-network:
